@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2022162386412615713}
   - component: {fileID: 2022162386412615712}
   - component: {fileID: 6092759083876275004}
+  - component: {fileID: 473065703}
   m_Layer: 0
   m_Name: AstroStay
   m_TagString: Player
@@ -165,5 +166,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveForce: 20
-  jumpForce: 700
+  jumpForce: 20
   maxVelocity: 4
+--- !u!114 &473065703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2022162386412615724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66b4c98d5431ad3408eadfb1cd1e1c54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  totalGas: 1000
+  totalGasSlider: {fileID: 0}

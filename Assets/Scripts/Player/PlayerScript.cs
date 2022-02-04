@@ -1,32 +1,47 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using IronFly.Core;
 
 namespace IronFly.Player
 {    
     public class PlayerScript : MonoBehaviour
     {
+        #region Veriables
         [SerializeField] private float moveForce=20f;
         [SerializeField] private float jumpForce=700f;
         [SerializeField] private float maxVelocity=4f;
 
         private Rigidbody2D myRd;
-        private Animator myAnim;
-        private bool isGrounded;
+        private Animator myAnim;        
+        private GasManager gasManager;
         private int animWalkBool=Animator.StringToHash("Walk");
+        private int animJumpBool=Animator.StringToHash("Jump");
+        [SerializeField]private bool isGround;
+        #endregion
 
+        #region  Unity
         private void Awake() 
         {
             myRd=GetComponent<Rigidbody2D>();    
-            myAnim=GetComponent<Animator>();            
+            myAnim=GetComponent<Animator>();       
+            gasManager=GetComponent<GasManager>();     
         }
-
+        
+        private void Update() 
+        {
+            if (isGround)
+            {
+                myAnim.SetBool(animJumpBool,false);
+            }    
+            else if(!isGround)
+            {
+                myAnim.SetBool(animJumpBool,true);
+            }
+        }
         private void FixedUpdate() 
         {
-            Debug.Log(myRd.velocity);
             PlayerWalkKeyboard();            
         }
+        #endregion
 
         private void PlayerWalkKeyboard()
         {
@@ -40,15 +55,8 @@ namespace IronFly.Player
             if (h>0)
             {
                 if (vel<maxVelocity)
-                {
-                    if (isGrounded)
-                    {                        
-                        forceX=moveForce;
-                    }
-                    else
-                    {
-                        forceX=moveForce*1.1f ;
-                    }
+                {                        
+                    forceX=moveForce;                                     
                 }
 
                 Vector3 scale=transform.localScale;
@@ -60,15 +68,8 @@ namespace IronFly.Player
             else if (h<0)
             {
                 if (vel < maxVelocity)
-                {
-                    if (isGrounded)
-                    {
-                        forceX = -moveForce;
-                    }
-                    else
-                    {
-                        forceX = -moveForce * 1.1f;
-                    }
+                {                    
+                    forceX = -moveForce;                    
                 }
 
                 Vector3 scale = transform.localScale;
@@ -82,23 +83,48 @@ namespace IronFly.Player
                 myAnim.SetBool(animWalkBool, false);
             }  
 
-            if (Input.GetKey(KeyCode.Space))
+            if (Input.GetKey(KeyCode.Space) && !gasManager.IsGasComplete)
             {
-                if (!isGrounded)
-                {
-                    //isGrounded=false;
-                    forceY = jumpForce;
-                }                
+                gasManager.DicreseGas();                
+                forceY = jumpForce;
             }
+            else
+            {
+                gasManager.IncreseGas();
+            }
+            
             myRd.AddForce(new Vector2(forceX,forceY));
-        }
+        }        
+    
         private void OnCollisionEnter2D(Collision2D other) 
         {
+            if (other.gameObject.CompareTag("Obstacles"))
+            {
+                Debug.Log("is hit");
+            }    
+            
             if (other.gameObject.CompareTag("Ground"))
             {
-                // isGrounded=true;
-            }
+                isGround=true;
+            }            
+        }
+
+        private void OnCollisionExit2D(Collision2D other) 
+        {
+            
+            if (other.gameObject.CompareTag("Ground"))
+            {
+                isGround=false;
+            }    
+        }        
+
+        private void OnCollisionStay2D(Collision2D other) 
+        {
+            
+            if (other.gameObject.CompareTag("Ground"))
+            {
+                isGround=true;
+            }            
         }
     }
-
 }
