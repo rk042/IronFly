@@ -4,6 +4,9 @@ namespace IronFly.Core
 {
     public class Portal : MonoBehaviour 
     {
+        public delegate void GameWinDelegate();
+        public static event GameWinDelegate gameWinEvent;
+        public static event GameWinDelegate gameFindKeyEvent;
         [SerializeField] ParticleSystem ps;
 
         private bool isProtalOpen=false;
@@ -21,9 +24,8 @@ namespace IronFly.Core
         private void OpenDoorPlayerHaveKey()
         {
             isProtalOpen=true;
-            Debug.Log("key is collected goto door");
+            // Debug.Log("key is collected goto door");
             ps.Play();
-            //TODO: apply some particle system here
         }
 
         private void OnTriggerEnter2D(Collider2D other) 
@@ -32,11 +34,13 @@ namespace IronFly.Core
             {
                 if (isProtalOpen)
                 {                    
-                    Debug.Log("GameOver Player Win");
+                    // Debug.Log("GameOver Player Win");                    
+                    gameWinEvent?.Invoke();                    
                 }
                 else 
                 {                    
-                    Debug.Log("Find Key");
+                    // Debug.Log("Find Key");
+                    gameFindKeyEvent?.Invoke();
                 }
             }
         }

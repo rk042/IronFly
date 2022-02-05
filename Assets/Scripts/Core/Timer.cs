@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using System;
 
 namespace IronFly.Core
 {    
@@ -8,14 +7,28 @@ namespace IronFly.Core
     {
         [SerializeField] private int levelTime;
         public delegate void UpdateTimer(int time);
-        public static event UpdateTimer updateTime;
         public delegate void GameOver();
-        public static event GameOver gameOver;
+        public static event UpdateTimer updateTimeEvent;
+        public static event GameOver gameOverEvent;
+        public static event UpdateTimer gameScoreEvent;
+        private int scoreByTime=0;
+
+        private void OnEnable() 
+        {
+            Portal.gameWinEvent+=StopTime;
+        }
+
+        private void OnDisable() 
+        {            
+            Portal.gameWinEvent-=StopTime;
+        }
+
+        private Coroutine StopStartTime;
 
         // Start is called before the first frame update
         void Start()
         {
-            StartCoroutine(COR_Timer());
+            StopStartTime=StartCoroutine(COR_Timer());
         }
 
         private IEnumerator COR_Timer()
@@ -23,17 +36,30 @@ namespace IronFly.Core
             for (int i = levelTime; i >= 0; i--)
             {
                 yield return new WaitForSecondsRealtime(1f);
-                
-                if (updateTime!=null)
-                {                    
-                    updateTime(i);
+                scoreByTime++;
+                if (updateTimeEvent != null)
+                {
+                    updateTimeEvent(i);
                 }
-            }    
-
-            if (gameOver!=null)
-            {                
-                gameOver();
             }
+
+            GameOverCall();
+        }
+
+        public void GameOverCall()
+        {
+            if (gameOverEvent != null)
+            {
+                gameOverEvent();
+                StopTime();
+            }
+        }
+
+        private void StopTime()
+        {
+            StopCoroutine(StopStartTime);
+            int realScore = levelTime- scoreByTime;
+            gameScoreEvent(realScore);
         }
     }
 }

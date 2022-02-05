@@ -15,6 +15,7 @@ namespace IronFly.Core
                 if (playerHaveKey!=null)
                 {                    
                     playerHaveKey();    
+                    Destroy(gameObject);
                 }
             }   
         }

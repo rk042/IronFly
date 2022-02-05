@@ -6,10 +6,11 @@ namespace IronFly.Player
     public class PlayerScript : MonoBehaviour
     {
         #region Veriables
+        public delegate void HitEvent();
+        public static event HitEvent hitEvent;        
         [SerializeField] private float moveForce=20f;
         [SerializeField] private float jumpForce=700f;
-        [SerializeField] private float maxVelocity=4f;
-
+        [SerializeField] private float maxVelocity=4f;        
         private Rigidbody2D myRd;
         private Animator myAnim;        
         private GasManager gasManager;
@@ -100,7 +101,8 @@ namespace IronFly.Player
         {
             if (other.gameObject.CompareTag("Obstacles"))
             {
-                Debug.Log("is hit");
+                Debug.Log("is hit");                
+                hitEvent?.Invoke();
             }    
             
             if (other.gameObject.CompareTag("Ground"))
