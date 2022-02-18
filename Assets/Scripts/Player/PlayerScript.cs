@@ -1,6 +1,6 @@
 using UnityEngine;
 using IronFly.Core;
-
+using EZCameraShake;
 namespace IronFly.Player
 {    
     public class PlayerScript : MonoBehaviour
@@ -11,11 +11,14 @@ namespace IronFly.Player
         [SerializeField] private float moveForce=20f;
         [SerializeField] private float jumpForce=700f;
         [SerializeField] private float maxVelocity=4f;        
+
         private Rigidbody2D myRd;
         private Animator myAnim;        
         private GasManager gasManager;
         private int animWalkBool=Animator.StringToHash("Walk");
         private int animJumpBool=Animator.StringToHash("Jump");
+
+        private CameraShaker cameraShaker;
         [SerializeField]private bool isGround;
         #endregion
 
@@ -25,6 +28,7 @@ namespace IronFly.Player
             myRd=GetComponent<Rigidbody2D>();    
             myAnim=GetComponent<Animator>();       
             gasManager=GetComponent<GasManager>();     
+            cameraShaker=GetComponent<CameraShaker>();
         }
         
         private void Update() 
@@ -102,6 +106,7 @@ namespace IronFly.Player
             if (other.gameObject.CompareTag("Obstacles"))
             {
                 Debug.Log("is hit");                
+                CameraShaker.Instance.ShakeOnce(1f,1f,.2f,.2f);
                 hitEvent?.Invoke();
             }    
             
